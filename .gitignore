@@ -11,3 +11,7 @@
 /build
 /captures
 .externalNativeBuild
+
+Python Backend/datasets/forex/
+Python Backend/datasets/index/
+Python Backend/datasets/stock/
