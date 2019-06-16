@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">StockPredAI</string>
-    <string name="title_google">Google</string>
-    <string name="title_apple">Apple</string>
-    <string name="title_facebook">Facebook</string>
-    <string name="title_amazon">Amazon</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="amazon">AMAZON</string>
+    <string name="microsoft">MICROSOFT</string>
+    <string name="apple">APPLE</string>
+    <string name="google">GOOGLE</string>
 
 </resources>
