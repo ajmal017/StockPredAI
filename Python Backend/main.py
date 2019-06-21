@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from my_utils import *
 
+# python network\download_datasets.py
+
 print("Appending datasets...")
 amzn = join_datasets(r'datasets/stock/AMZN_1MIN_ze7avh/*.csv')
 # 9:30 to 15:59

@@ -3,9 +3,13 @@ import zipfile
 import os
 
 
-def download_file(url, name):
+def download_file(url, location, name):
     myfile = requests.get(url)
-    open(name, 'wb').write(myfile.content)
+
+    if not os.path.exists(location):
+        os.makedirs(location)
+
+    open(location + name, 'wb').write(myfile.content)
 
 
 def unzip_file_and_delete(name):
