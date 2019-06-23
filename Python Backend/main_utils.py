@@ -16,9 +16,13 @@ def join_datasets(path):
 
 def format_single_date(date):
     if (date.find(":") != -1):
-        return int(date.replace(":", "").replace(".", "").replace(" ", ""))
+        formatted = date.replace(":", "").replace(
+            ".", "").replace(" ", "").replace("-", "")
+        return int(formatted)/100
     else:
-        return int(date)
+        print("returning: ")
+        print(date)
+        return int(date)/100
 
 
 def format_dates(df):
@@ -47,3 +51,7 @@ def find_common_smallest_final_date(dfs):
 def crop_dataset_from_dates(df, initial_date, final_date):
     cropped_df = df[df[0] >= initial_date]
     return cropped_df[cropped_df[0] <= final_date]
+
+
+def get_time_interval(df):
+    return df.iloc[1][0] - df.iloc[0][0]

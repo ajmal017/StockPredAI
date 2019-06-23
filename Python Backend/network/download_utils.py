@@ -3,8 +3,8 @@ import zipfile
 import os
 
 
-def download_file(url, location, name):
-    myfile = requests.get(url)
+def download_file(url, name, location):
+    myfile = requests.get(url + name)
 
     if not os.path.exists(location):
         os.makedirs(location)
