@@ -1,31 +1,43 @@
 # -*- coding: utf-8 -*-
-from my_utils import *
+from network.constants import *
+from main_utils import *
+from network.fetch_utils_av import *
 
+# To download datasets, run:
 # python network\download_datasets.py
 
 print("Appending datasets...")
-amzn = join_datasets(r'datasets/stock/AMZN_1MIN_ze7avh/*.csv')
-# 9:30 to 15:59
+# open, high, low, close, volume, numberOfTrades, weightedAvgPrice from 9:30 to 15:59
+amzn = join_datasets(STOCKS_LOCATION + AMZN_ENDPOINT + "/*.csv")
+appl = join_datasets(STOCKS_LOCATION + APPL_ENDPOINT + "/*.csv")
+intc = join_datasets(STOCKS_LOCATION + INTC_ENDPOINT + "/*.csv")
 
-spx = join_datasets(r'datasets/index/SPX_1MIN_8v96zt/*.csv')
-# 9:30 to 15:59
+stocks = [amzn, appl, intc]
 
-usd_eur = join_datasets(r'datasets/forex/EURUSD_5MIN_99rasp/*.csv')
-# all the time every 5
+del amzn, appl, intc
 
 print("Formating dates...")
-format_dates(amzn)
-format_dates(spx)
-format_dates(usd_eur)
+for stock in stocks:
+    format_dates(stock)
 
 print("Intersecting datasets...")
-initial_date = find_common_biggest_initial_date([amzn, spx, usd_eur])
-final_date = find_common_smallest_final_date([amzn, spx, usd_eur])
+initial_date = find_common_biggest_initial_date(stocks)
+final_date = find_common_smallest_final_date(stocks)
 
-amzn = crop_dataset_from_dates(amzn, initial_date, final_date)
-spx = crop_dataset_from_dates(spx, initial_date, final_date)
-usd_eur = crop_dataset_from_dates(usd_eur, initial_date, final_date)
+for stock in stocks:
+    stock = crop_dataset_from_dates(stock, initial_date, final_date)
+for i in range(0, len(stocks)):
+    stocks[i] = stocks[i].iloc[:, 0: 6]
 
-print(amzn)
-print(spx)
-print(usd_eur)
+for stock in stocks:
+    print(str(len(stock.index)) + " - Every " +
+          str(get_time_interval(stock)) + " seconds")
+
+print("Common start date: " + str(initial_date))
+print("Common final date: " + str(final_date))
+
+in_appl = fetch_stock_data("APPL")  # open, high, low, close, volume
+in_appl = format_av_data(in_appl)
+
+print(str(len(in_appl.index)) + " - Every " +
+      str(get_time_interval(in_appl)) + " seconds")
