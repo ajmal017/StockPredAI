@@ -2,6 +2,7 @@
 from network.constants import *
 from main_utils import *
 from network.fetch_utils_av import *
+from filler_utils import *
 
 # To download datasets, run:
 # python network\download_datasets.py
@@ -41,3 +42,5 @@ in_appl = format_av_data(in_appl)
 
 print(str(len(in_appl.index)) + " - Every " +
       str(get_time_interval(in_appl)) + " seconds")
+
+fill_with_avgs(stocks)
