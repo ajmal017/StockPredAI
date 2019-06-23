@@ -9,38 +9,34 @@ from filler_utils import *
 
 print("Appending datasets...")
 # open, high, low, close, volume, numberOfTrades, weightedAvgPrice from 9:30 to 15:59
-amzn = join_datasets(STOCKS_LOCATION + AMZN_ENDPOINT + "/*.csv")
-appl = join_datasets(STOCKS_LOCATION + APPL_ENDPOINT + "/*.csv")
-intc = join_datasets(STOCKS_LOCATION + INTC_ENDPOINT + "/*.csv")
-
-stocks = [amzn, appl, intc]
-
-del amzn, appl, intc
+stocks = [
+    join_datasets(STOCKS_LOCATION + AMZN_ENDPOINT + "/*.csv"),
+    join_datasets(STOCKS_LOCATION + APPL_ENDPOINT + "/*.csv"),
+    join_datasets(STOCKS_LOCATION + INTC_ENDPOINT + "/*.csv"),
+    join_datasets(STOCKS_LOCATION + JPM_ENDPOINT + "/*.csv"),
+    join_datasets(STOCKS_LOCATION + BAC_ENDPOINT + "/*.csv")]
 
 print("Formating dates...")
 for stock in stocks:
     format_dates(stock)
 
 print("Intersecting datasets...")
-initial_date = find_common_biggest_initial_date(stocks)
-final_date = find_common_smallest_final_date(stocks)
+crop_dataset_to_frontiers(stocks)
 
-for stock in stocks:
-    stock = crop_dataset_from_dates(stock, initial_date, final_date)
+# this crops datasets to work as the ones from the API
 for i in range(0, len(stocks)):
     stocks[i] = stocks[i].iloc[:, 0: 6]
+    print(str(len(stocks[i].index)) + " - Every " +
+          str(get_time_interval(stocks[i])) + " minutes")
 
-for stock in stocks:
-    print(str(len(stock.index)) + " - Every " +
-          str(get_time_interval(stock)) + " seconds")
+print("Fetching API datasets...")
+in_symbols = ["AMZN", "APPL", "INTC", "JPM", "BAC"]
+in_stocks = []
+for i in range(0, len(in_symbols)):
+    symbol = in_symbols[i]
+    print("Retrieving " + symbol + " data...")
+    in_stocks.append(format_av_data(fetch_stock_data(symbol)))
+    print(symbol + " fetch data size: " + str(len(in_stocks[i].index)) + " - Every " +
+          str(get_time_interval(in_stocks[i])) + " minutes")
 
-print("Common start date: " + str(initial_date))
-print("Common final date: " + str(final_date))
-
-in_appl = fetch_stock_data("APPL")  # open, high, low, close, volume
-in_appl = format_av_data(in_appl)
-
-print(str(len(in_appl.index)) + " - Every " +
-      str(get_time_interval(in_appl)) + " seconds")
-
-fill_with_avgs(stocks)
+# fill_with_avgs(stocks)

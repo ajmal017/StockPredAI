@@ -48,9 +48,33 @@ def find_common_smallest_final_date(dfs):
     return common_date
 
 
-def crop_dataset_from_dates(df, initial_date, final_date):
-    cropped_df = df[df[0] >= initial_date]
-    return cropped_df[cropped_df[0] <= final_date]
+def validate_date_frontiers(dfs):
+    common_start = dfs[0][0][0]
+    for i in range(1, len(dfs)):
+        current = dfs[i][0][0]
+        if current != common_start:
+            return False
+
+    last = dfs[0][0]
+    common_end = last[len(last)-1]
+    for i in range(1, len(dfs)):
+        current = dfs[i][0][len(dfs[i][0])-1]
+        if current != common_end:
+            return False
+
+    return True
+
+
+def crop_dataset_to_frontiers(dfs):
+    while not validate_date_frontiers(dfs):
+
+        common_first = find_common_biggest_initial_date(dfs)
+        common_last = find_common_smallest_final_date(dfs)
+
+        for i in range(len(dfs)):
+            dfs[i] = dfs[i][dfs[i][0] >= common_first]
+            dfs[i] = dfs[i][dfs[i][0] <= common_last]
+            dfs[i] = dfs[i].reset_index(drop=True)
 
 
 def get_time_interval(df):
