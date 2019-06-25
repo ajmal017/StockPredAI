@@ -1,43 +1,18 @@
-# -*- coding: utf-8 -*-
-from network.constants import *
-from main_utils import *
-from network.fetch_utils_av import *
+from main_functions import *
 
-# To download datasets, run:
-# python network\download_datasets.py
+pd.set_option('display.max_columns', None)
+pd.options.mode.chained_assignment = None
 
-print("Appending datasets...")
-# open, high, low, close, volume, numberOfTrades, weightedAvgPrice from 9:30 to 15:59
-amzn = join_datasets(STOCKS_LOCATION + AMZN_ENDPOINT + "/*.csv")
-appl = join_datasets(STOCKS_LOCATION + APPL_ENDPOINT + "/*.csv")
-intc = join_datasets(STOCKS_LOCATION + INTC_ENDPOINT + "/*.csv")
+STOCK_SYMBOLS = ["AMZN", "INTC"]
+TIME_STEPS = 10  # minutes to consider
+EPOCHS = 5
+BATCH_SIZE = 1024
 
-stocks = [amzn, appl, intc]
+# download_starting_data(STOCK_SYMBOLS)
 
-del amzn, appl, intc
+# stocks = preprocess_data(STOCK_SYMBOLS)
 
-print("Formating dates...")
-for stock in stocks:
-    format_dates(stock)
+# train_data(stocks, TIME_STEPS, EPOCHS, BATCH_SIZE)
 
-print("Intersecting datasets...")
-initial_date = find_common_biggest_initial_date(stocks)
-final_date = find_common_smallest_final_date(stocks)
-
-for stock in stocks:
-    stock = crop_dataset_from_dates(stock, initial_date, final_date)
-for i in range(0, len(stocks)):
-    stocks[i] = stocks[i].iloc[:, 0: 6]
-
-for stock in stocks:
-    print(str(len(stock.index)) + " - Every " +
-          str(get_time_interval(stock)) + " seconds")
-
-print("Common start date: " + str(initial_date))
-print("Common final date: " + str(final_date))
-
-in_appl = fetch_stock_data("APPL")  # open, high, low, close, volume
-in_appl = format_av_data(in_appl)
-
-print(str(len(in_appl.index)) + " - Every " +
-      str(get_time_interval(in_appl)) + " seconds")
+in_stocks = fetch_new_data(STOCK_SYMBOLS, TIME_STEPS)
+print(in_stocks)
