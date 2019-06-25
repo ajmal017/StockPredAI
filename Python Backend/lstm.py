@@ -1,6 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout
 
+
 def compile_lstm(input_shape):
     lstm = Sequential()
 
