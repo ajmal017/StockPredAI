@@ -1,42 +1,41 @@
-# -*- coding: utf-8 -*-
-from network.constants import *
-from main_utils import *
-from network.fetch_utils_av import *
-from filler_utils import *
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+
+from lstm import compile_lstm
+from preprocess_data import preprocess_data
 
 # To download datasets, run:
 # python network\download_datasets.py
 
-print("Appending datasets...")
-# open, high, low, close, volume, numberOfTrades, weightedAvgPrice from 9:30 to 15:59
-stocks = [
-    join_datasets(STOCKS_LOCATION + AMZN_ENDPOINT + "/*.csv"),
-    join_datasets(STOCKS_LOCATION + APPL_ENDPOINT + "/*.csv"),
-    join_datasets(STOCKS_LOCATION + INTC_ENDPOINT + "/*.csv"),
-    join_datasets(STOCKS_LOCATION + JPM_ENDPOINT + "/*.csv"),
-    join_datasets(STOCKS_LOCATION + BAC_ENDPOINT + "/*.csv")]
+TIME_STEPS = 5 # minutes
+EPOCHS = 5 # this will increase dramatically
+BATCH_SIZE = 1024
 
-print("Formating dates...")
-for stock in stocks:
-    format_dates(stock)
+stocks = preprocess_data()
+amzn = stocks[0]
 
-print("Intersecting datasets...")
-crop_dataset_to_frontiers(stocks)
+#print(amzn.iloc[0])
+#print(amzn.iloc[1])
+#print(amzn.iloc[2])
 
-# this crops datasets to work as the ones from the API
-for i in range(0, len(stocks)):
-    stocks[i] = stocks[i].iloc[:, 0: 6]
-    print(str(len(stocks[i].index)) + " - Every " +
-          str(get_time_interval(stocks[i])) + " minutes")
+training_set = amzn.iloc[:, 1:2].values
 
-print("Fetching API datasets...")
-in_symbols = ["AMZN", "APPL", "INTC", "JPM", "BAC"]
-in_stocks = []
-for i in range(0, len(in_symbols)):
-    symbol = in_symbols[i]
-    print("Retrieving " + symbol + " data...")
-    in_stocks.append(format_av_data(fetch_stock_data(symbol)))
-    print(symbol + " fetch data size: " + str(len(in_stocks[i].index)) + " - Every " +
-          str(get_time_interval(in_stocks[i])) + " minutes")
+scaler = MinMaxScaler()
+#training_set = scaler.fit_transform(training_set)
 
-# fill_with_avgs(stocks)
+X_train = []
+y_train = []
+for i in range(TIME_STEPS, len(amzn)):
+    X_train.append(training_set[i - TIME_STEPS:i, 0])
+    y_train.append(training_set[i])
+
+X_train, y_train = np.array(X_train), np.array(y_train)
+
+n_rows, n_cols = X_train.shape[0], X_train.shape[1]
+X_train = np.reshape(X_train, (n_rows, n_cols, 1))  # here we add the other variables :0
+print(X_train)
+print("y_train")
+print(y_train)
+
+#lstm = compile_lstm(input_shape=(n_cols, 1))
+#lstm.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
