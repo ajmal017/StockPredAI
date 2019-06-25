@@ -1,37 +1,37 @@
-import pandas as pd
-import numpy as np
-from statsmodels.tsa.arima_model import ARIMA
-from sklearn.metrics import mean_squared_error
-
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn.metrics import mean_squared_error
+from statsmodels.tsa.arima_model import ARIMA
+
 
 # taken from https://github.com/borisbanushev/stockpredictionai#technicalind
 def add_technical_indicators(df):
     # Create 7 and 21 days Moving Average
-    df['ma7'] = df['Price'].rolling(window=7).mean()
-    df['ma21'] = df['Price'].rolling(window=21).mean()
+    df['ma7'] = df['price'].rolling(window=7).mean()
+    df['ma21'] = df['price'].rolling(window=21).mean()
 
-    # Create MACD
-    df['26ema'] = pd.Series.ewm(df['Price'], span=26).mean()
-    df['12ema'] = pd.Series.ewm(df['Price'], span=12).mean()
-    df['MACD'] = (df['12ema'] - df['26ema'])
+    # Create macd
+    df['26ema'] = pd.Series.ewm(df['price'], span=26).mean()
+    df['12ema'] = pd.Series.ewm(df['price'], span=12).mean()
+    df['macd'] = (df['12ema'] - df['26ema'])
 
     # Create Bollinger Bands
-    df['20sd'] = df['Price'].rolling(2).std()
+    df['20sd'] = df['price'].rolling(2).std()
     df['upper_band'] = df['ma21'] + (df['20sd'] * 2)
     df['lower_band'] = df['ma21'] - (df['20sd'] * 2)
 
     # Create Exponential moving average
-    df['ema'] = df['Price'].ewm(com=0.5).mean()
+    df['ema'] = df['price'].ewm(com=0.5).mean()
 
     # Create Momentum
-    df['momentum'] = df['Price'] - 1
+    df['momentum'] = df['price'] - 1
 
     return df
 
 
 def add_fourier_transforms(df):
-    close_fft = np.fft.fft(np.asarray(df["Price"].tolist()))
+    close_fft = np.fft.fft(np.asarray(df["price"].tolist()))
     fft_df = pd.DataFrame({'fft': close_fft})
     fft_df['absolute'] = fft_df['fft'].apply(lambda x: np.abs(x))
     fft_df['angle'] = fft_df['fft'].apply(lambda x: np.angle(x))
@@ -46,7 +46,7 @@ def add_fourier_transforms(df):
         # print(fft_list_m10)
         '''
         plt.plot(np.fft.ifft(fft_list_m10), label='Fourier transform with {} components'.format(num_))
-    plt.plot(df["Price"], label='Real')
+    plt.plot(df["price"], label='Real')
     plt.xlabel('Minutes')
     plt.ylabel('USD')
     plt.legend()
@@ -55,7 +55,7 @@ def add_fourier_transforms(df):
 
 
 def add_arima(df):
-    X = df['Price'].values
+    X = df['price'].values
     size = int(len(X) * 0.66)
     train, test = X[0:size], X[size:len(X)]
     history = [x for x in train]
