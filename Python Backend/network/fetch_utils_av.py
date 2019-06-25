@@ -2,9 +2,8 @@ from alpha_vantage.foreignexchange import ForeignExchange
 from alpha_vantage.timeseries import TimeSeries
 from main_utils import format_dates
 
-ALPHA_VANTAGE_API_KEY = "ZPZSDRIOX1MCVZW7"
-
 # pip install alpha_vantage
+ALPHA_VANTAGE_API_KEY = "ZPZSDRIOX1MCVZW7"
 
 
 def fetch_stock_data(symbol):
