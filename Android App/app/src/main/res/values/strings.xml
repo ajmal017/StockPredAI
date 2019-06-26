@@ -1,9 +1,4 @@
 <resources>
     <string name="app_name">StockPredAI</string>
 
-    <string name="amazon">AMAZON</string>
-    <string name="microsoft">MICROSOFT</string>
-    <string name="apple">APPLE</string>
-    <string name="google">GOOGLE</string>
-
 </resources>
