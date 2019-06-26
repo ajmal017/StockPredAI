@@ -1,6 +1,7 @@
 package com.makuhita.StockPredAI
 
 import android.os.Bundle
+import android.text.Html
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {

@@ -43,8 +43,6 @@ class MainFragment : Fragment() {
             adapter!!.setList(viewModel.stocks.value!!)
         })
 
-        //viewModel.request()
-        //viewModel.realtimeRequest()
         viewModel.createFakeDataset()
     }
 

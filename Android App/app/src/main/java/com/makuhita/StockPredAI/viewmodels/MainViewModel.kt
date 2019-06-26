@@ -55,17 +55,17 @@ class MainViewModel(private val context: Context, private val db: FirebaseFirest
         stocks.value = mutableListOf()
         for (i in 0..3) {
             val prices = mutableListOf<Price>()
-            for (i in 0..10) {
-                val open = ThreadLocalRandom.current().nextDouble(500.0, 2000.0).round(2)
+            for (j in 0..20) {
+                val open = ThreadLocalRandom.current().nextDouble(500.0, 2000.0)
                 val close = ThreadLocalRandom.current().nextDouble(500.0, 2000.0)
                 val high = max(open, close) + ThreadLocalRandom.current().nextDouble(10.0, 100.0)
                 val low = min(open, close) - ThreadLocalRandom.current().nextDouble(10.0, 100.0)
                 val volume = ThreadLocalRandom.current().nextInt(10, 10000)
                 prices.add(Price(open, close, high, low, volume))
             }
-            val estimate = prices.last().open + ThreadLocalRandom.current().nextDouble(-500.0, 500.0).round(2)
+            val estimate = prices.last().open + ThreadLocalRandom.current().nextDouble(-500.0, 500.0)
 
-            val name = when(i) {
+            val name = when (i) {
                 0 -> "Amazon"
                 1 -> "Apple"
                 2 -> "JPMorgan"
@@ -73,8 +73,15 @@ class MainViewModel(private val context: Context, private val db: FirebaseFirest
                 else -> "Unknown"
             }
 
-            stocks.value!!.add(Stock(name, prices, prices.last().open, estimate, abs(estimate - prices.last().open).round(2)))
-
+            stocks.value!!.add(
+                Stock(
+                    name,
+                    prices,
+                    prices.last().open.round(2),
+                    estimate.round(2),
+                    abs(estimate - prices.last().open).round(2)
+                )
+            )
         }
     }
 
