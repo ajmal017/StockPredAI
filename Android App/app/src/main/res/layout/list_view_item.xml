@@ -2,10 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="140dp">
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginVertical="2dp">
 
     <TextView android:id="@+id/tvTitle"
-              android:layout_width="0dp" android:layout_height="wrap_content"
+              android:layout_width="0dp" android:layout_height="26dp"
               android:text="Amazon"
               android:layout_alignParentBottom="true"
               android:layout_alignParentStart="true"
@@ -13,49 +15,72 @@
               android:layout_toStartOf="@id/llPrices"
               android:layout_toEndOf="@id/llPrices"
               android:textAlignment="center"
-              android:textSize="20sp"/>
+              android:textSize="16sp"
+              android:textColor="@color/primaryTextColor"
+              android:background="@color/primaryColor"/>
 
     <LinearLayout android:id="@+id/llPrices"
                   android:layout_width="100dp" android:layout_height="0dp"
                   android:orientation="vertical"
                   android:layout_alignParentEnd="true"
                   android:layout_alignParentTop="true"
-                  android:layout_alignParentBottom="true">
+                  android:layout_alignParentBottom="true"
+                  android:background="@color/primaryColor"
+    android:gravity="center_vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:background="@drawable/background">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:text="Actual:"
+                      android:textAlignment="center"
+                      android:textColor="@color/primaryTextColor"/>
+            <TextView android:id="@+id/tvCurrent"
+                      android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:textAlignment="center"
+                      android:textSize="18sp"
+                      android:textColor="@color/primaryTextColor"/>
+        </LinearLayout>
 
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:text="Actual:"
-                  android:textAlignment="center"/>
-        <TextView android:id="@+id/tvCurrent"
-                  android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:textAlignment="center"
-                  android:textSize="20sp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:background="@drawable/background">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:text="Predicción:"
+                      android:textAlignment="center"
+                      android:textColor="@color/primaryTextColor"/>
+            <TextView android:id="@+id/tvPrediction"
+                      android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:textAlignment="center"
+                      android:textSize="18sp"
+                      android:textColor="@color/primaryTextColor"/>
+        </LinearLayout>
 
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:text="Predicción:"
-                  android:textAlignment="center"/>
-        <TextView android:id="@+id/tvPrediction"
-                  android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:textAlignment="center"
-                  android:textSize="20sp"/>
-
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:text="Ganancia:"
-                  android:textAlignment="center"/>
-        <TextView android:id="@+id/tvEarning"
-                  android:layout_width="match_parent" android:layout_height="30dp"
-                  android:textAlignment="center"
-                  android:textSize="20sp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:background="@drawable/background">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:text="Ganancia:"
+                      android:textAlignment="center"
+                      android:textColor="@color/primaryTextColor"/>
+            <TextView android:id="@+id/tvEarning"
+                      android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:textAlignment="center"
+                      android:textSize="18sp"
+                      android:textColor="@color/primaryTextColor"/>
+        </LinearLayout>
 
     </LinearLayout>
 
     <com.github.mikephil.charting.charts.CandleStickChart
+            android:id="@+id/chart"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/llPrices"
-            android:layout_above="@id/tvTitle"/>
+            android:layout_above="@id/tvTitle"
+            android:background="@android:color/white"/>
 
 
 </RelativeLayout>
