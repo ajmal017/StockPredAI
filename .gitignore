@@ -17,3 +17,7 @@ Python Backend/datasets/index/
 Python Backend/datasets/stock/
 
 Python Backend/\.idea/
+
+Python Backend/__pycache__/
+
+Python Backend/network/__pycache__/
