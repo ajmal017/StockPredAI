@@ -2,19 +2,18 @@ package com.makuhita.StockPredAI.views.adapters
 
 import android.content.Context
 import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.CandleStickChart
 import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
 import com.makuhita.StockPredAI.R
 import com.makuhita.StockPredAI.entities.Stock
-
 
 
 class ListViewAdapter internal constructor(private val context: Context) :
@@ -37,6 +36,7 @@ class ListViewAdapter internal constructor(private val context: Context) :
     }
 
     fun setList(list: MutableList<Stock>) {
+        Log.e("List in adapter", list.toString())
         this.list = list
         notifyDataSetChanged()
     }
@@ -44,7 +44,7 @@ class ListViewAdapter internal constructor(private val context: Context) :
     class ViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
         fun setData(stock: Stock) {
 
-            itemView.findViewById<TextView>(R.id.tvTitle).text = stock.name
+            itemView.findViewById<TextView>(R.id.tvTitle).text = stock.symbol
             itemView.findViewById<TextView>(R.id.tvCurrent).text = "$${stock.price}"
             itemView.findViewById<TextView>(R.id.tvPrediction).text = "$${stock.estimate}"
             itemView.findViewById<TextView>(R.id.tvEarning).text = "$${stock.earning}"
@@ -72,8 +72,12 @@ class ListViewAdapter internal constructor(private val context: Context) :
 
             for (i in 0 until stock.prices.size) {
                 val prices = stock.prices[i]
-                chartValues.add(CandleEntry(i.toFloat(), prices.high.toFloat(),
-                    prices.low.toFloat(), prices.open.toFloat(), prices.close.toFloat()))
+                chartValues.add(
+                    CandleEntry(
+                        i.toFloat(), prices.high.toFloat(),
+                        prices.low.toFloat(), prices.open.toFloat(), prices.close.toFloat()
+                    )
+                )
             }
 
             val candleDataSet = CandleDataSet(chartValues, "DataSet")

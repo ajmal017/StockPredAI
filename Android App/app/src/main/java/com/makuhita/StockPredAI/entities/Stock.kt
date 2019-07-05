@@ -1,9 +1,12 @@
 package com.makuhita.StockPredAI.entities
 
-data class Stock(
-    val name: String,
-    val prices: List<Price>,
-    val price: Double,
-    val estimate: Double,
-    val earning: Double
-)
+class Stock {
+    val symbol: String = ""
+    val price: Double = 0.0
+    val estimate: Double = 0.0
+    val earning: Double = 0.0
+    val prices: List<Price> = emptyList()
+    override fun toString(): String {
+        return "Stock(symbol='$symbol', price=$price, estimate=$estimate, earning=$earning, prices=$prices)"
+    }
+}
