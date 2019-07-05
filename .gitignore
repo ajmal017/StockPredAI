@@ -1,12 +1,6 @@
 *.iml
 .gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+
 .DS_Store
 /build
 /captures
@@ -21,3 +15,12 @@ Python Backend/\.idea/
 Python Backend/__pycache__/
 
 Python Backend/network/__pycache__/
+
+Android App/\.idea/
+Android App/\.idea/caches
+Android App/\.idea/libraries
+Android App/\.idea/modules.xml
+Android App/\.idea/workspace.xml
+Android App/\.idea/navEditor.xml
+Android App/\.idea/assetWizardSettings.xml
+Android App/local.properties
