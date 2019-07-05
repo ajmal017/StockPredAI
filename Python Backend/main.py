@@ -4,7 +4,7 @@ from network.push_firestore import push_stocks_data
 pd.set_option('display.max_columns', None)
 pd.options.mode.chained_assignment = None
 
-STOCK_SYMBOLS = ["AMZN"]
+STOCK_SYMBOLS = ["AMZN", "INTC"]
 TIME_STEPS = 10  # minutes to consider
 EPOCHS = 5
 BATCH_SIZE = 1024
@@ -15,7 +15,7 @@ BATCH_SIZE = 1024
 
 #train_data(stocks, TIME_STEPS, EPOCHS, BATCH_SIZE)
 
-in_stocks = fetch_new_data(STOCK_SYMBOLS, TIME_STEPS)
+in_stocks, push_stocks = fetch_new_data(STOCK_SYMBOLS, TIME_STEPS)
 print(in_stocks)
 
-push_stocks_data(STOCK_SYMBOLS, in_stocks)
+push_stocks_data(STOCK_SYMBOLS, push_stocks)

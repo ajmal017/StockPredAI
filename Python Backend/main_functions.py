@@ -70,6 +70,7 @@ def train_data(stocks, time_steps, epochs, batch_size):
 def fetch_new_data(stock_symbols, time_steps):
     print("Fetching API datasets...")
     stocks = []
+    push_stocks = []
     for symbol in stock_symbols:
         print(" - Retrieving " + symbol + " data...")
         i = stock_symbols.index(symbol)
@@ -79,8 +80,12 @@ def fetch_new_data(stock_symbols, time_steps):
 
         stocks.append(data[[1, 5]])
         stocks[i].rename(columns={1: 'price', 5: 'volume'}, inplace=True)
+
+        push_stocks.append(data[[1, 2, 3, 4, 5]])
+        push_stocks[i].rename(columns={1: 'open', 2: 'close', 3: 'high', 4: 'low', 5: 'volume'}, inplace=True)
+
         stocks[i] = add_technical_indicators(stocks[i])
 
         add_fourier_transforms(stocks[i])
         stocks[i] = stocks[i].iloc[20:].reset_index(drop=True)
-    return stocks
+    return stocks, push_stocks
