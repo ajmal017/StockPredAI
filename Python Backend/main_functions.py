@@ -39,7 +39,9 @@ def preprocess_data(stock_symbols):
         stocks[i].rename(columns={1: 'price', 5: 'volume'}, inplace=True)
         stocks[i] = add_technical_indicators(stocks[i])
 
+        print("adding fourier transforms...")
         add_fourier_transforms(stocks[i])
+        print("added fourier transforms successfully.")
         stocks[i] = stocks[i].iloc[20:].reset_index(drop=True)
     return stocks
     # Seems that arima is too slow for this dataset
