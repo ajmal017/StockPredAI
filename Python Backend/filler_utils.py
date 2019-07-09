@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.arima_model import ARIMA
+from timeout_utils import timeout
 
 
 # taken from https://github.com/borisbanushev/stockpredictionai#technicalind
@@ -52,6 +53,19 @@ def add_fourier_transforms(df):
     plt.legend()
     plt.show()
     '''
+
+
+def add_fourier_transforms_with_timeout(df, seconds):
+    print("Adding fourier transforms to dataset of size: " + str(len(df)))
+    func = timeout(seconds)(add_fourier_transforms)
+
+    try:
+        func(df)
+        print("Added fourier transforms successfully.")
+    except:
+        print("Fourier transforms taking more than " + str(seconds) + " seconds. Removing last row...")
+        df.drop(df.tail(1).index, inplace=True)
+        add_fourier_transforms_with_timeout(df, seconds)
 
 
 def add_arima(df):

@@ -21,7 +21,7 @@ def download_starting_data(stock_symbols):
     print("Unzipping complete.")
 
 
-def preprocess_data(stock_symbols):
+def preprocess_data(stock_symbols, fast_fourier_timeout_seconds):
     print("Appending datasets...")
     stocks = []
     for symbol in stock_symbols:
@@ -38,17 +38,15 @@ def preprocess_data(stock_symbols):
         stocks[i] = stocks[i][[1, 5]]
         stocks[i].rename(columns={1: 'price', 5: 'volume'}, inplace=True)
         stocks[i] = add_technical_indicators(stocks[i])
-
-        print("adding fourier transforms...")
-        add_fourier_transforms(stocks[i])
-        print("added fourier transforms successfully.")
+        add_fourier_transforms_with_timeout(stocks[i], fast_fourier_timeout_seconds)
         stocks[i] = stocks[i].iloc[20:].reset_index(drop=True)
     return stocks
     # Seems that arima is too slow for this dataset
     # add_arima(stocks[i])
 
 
-def train_data(stocks, time_steps, epochs, batch_size):
+def train_data(stock_symbols, stocks, time_steps, epochs, batch_size):
+    stock_index = -1
     for stock in stocks:
         training_set = stock.iloc[:, :].values
         training_set = MinMaxScaler().fit_transform(training_set)
@@ -65,6 +63,12 @@ def train_data(stocks, time_steps, epochs, batch_size):
 
         lstm = compile_lstm(input_shape=(n_cols, n_predictors))
         lstm.fit(x_train, y_train, epochs=epochs, batch_size=batch_size)
+
+        stock_index += 1
+        location = "models/"
+        if not os.path.exists(location):
+            os.makedirs(location)
+        lstm.save(location + str(stock_symbols[stock_index]) + ".h5")
 
 
 def fetch_new_data(stock_symbols, time_steps):
