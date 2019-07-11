@@ -31,8 +31,6 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         adapter = ListViewAdapter(context!!)
         lvStocks.adapter = adapter
 
@@ -46,8 +44,6 @@ class MainFragment : Fragment() {
 
             adapter!!.setList(viewModel.stocks.value!!)
         })
-
-        //viewModel.createFakeDataset()
     }
 
 }

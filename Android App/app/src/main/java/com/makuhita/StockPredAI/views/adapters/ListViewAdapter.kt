@@ -14,7 +14,7 @@ import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
 import com.makuhita.StockPredAI.R
 import com.makuhita.StockPredAI.entities.Stock
-
+import kotlin.math.abs
 
 class ListViewAdapter internal constructor(private val context: Context) :
     RecyclerView.Adapter<ListViewAdapter.ViewHolder>() {
@@ -46,8 +46,8 @@ class ListViewAdapter internal constructor(private val context: Context) :
 
             itemView.findViewById<TextView>(R.id.tvTitle).text = stock.symbol
             itemView.findViewById<TextView>(R.id.tvCurrent).text = "$${stock.price}"
-            itemView.findViewById<TextView>(R.id.tvPrediction).text = "$${stock.estimate}"
-            itemView.findViewById<TextView>(R.id.tvEarning).text = "$${stock.earning}"
+            itemView.findViewById<TextView>(R.id.tvPrediction).text = "$${stock.estimate.round(2)}"
+            itemView.findViewById<TextView>(R.id.tvEarning).text = "$${abs(stock.estimate - stock.price).round(2)}"
 
             val chart = itemView.findViewById<CandleStickChart>(R.id.chart)
             chart.isHighlightPerTapEnabled = true
@@ -96,5 +96,12 @@ class ListViewAdapter internal constructor(private val context: Context) :
 
             chart.animateX(1000)
         }
+
+        private fun Double.round(decimals: Int): Double {
+            var multiplier = 1.0
+            repeat(decimals) { multiplier *= 10 }
+            return kotlin.math.round(this * multiplier) / multiplier
+        }
+
     }
 }
