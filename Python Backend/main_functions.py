@@ -4,6 +4,8 @@ from filler_utils import *
 from lstm import compile_lstm
 from main_utils import *
 from network.fetch_utils_av import *
+from keras.models import load_model
+from sklearn.externals import joblib
 
 from network.download_utils import *
 from constants import *
@@ -46,10 +48,34 @@ def preprocess_data(stock_symbols, fast_fourier_timeout_seconds):
 
 
 def train_data(stock_symbols, stocks, time_steps, epochs, batch_size):
+
+    # we fetch data to MinMax scale the network accordingly
+    in_stocks = fetch_new_data(stock_symbols, time_steps)[0]
     stock_index = -1
     for stock in stocks:
+        stock_index += 1
+        symbol = stock_symbols[stock_index]
+
+        stock = stock.append(in_stocks[stock_index], ignore_index=True)
+        stock = stock.append(stock.max().map(lambda x: x*1.5), ignore_index=True)
+        stock = stock.append(stock.min().map(lambda x: x * 0.5), ignore_index=True)
+
         training_set = stock.iloc[:, :].values
-        training_set = MinMaxScaler().fit_transform(training_set)
+        stock.drop(stock.tail((time_steps + 2)).index, inplace=True)
+
+        scaler = MinMaxScaler().fit(training_set)
+        if not os.path.exists(SCALERS_LOCATION):
+            os.makedirs(SCALERS_LOCATION)
+        joblib.dump(scaler, SCALERS_LOCATION + symbol + ".save")
+
+        # finally we save the scaler and delete the mock data (10 fetched and 2 estimated)
+        training_set = training_set[:len(training_set)-(time_steps + 2)]
+        training_set = scaler.transform(training_set)
+
+        helper_file = open(SCALERS_LOCATION + symbol + "helper.txt", "w")
+        l = str(stock["price"][0]) + " " + str(training_set[0][0])
+        helper_file.writelines(l)
+        helper_file.close()
 
         x_train, y_train = [], []
         for i in range(time_steps, len(stock)):
@@ -58,17 +84,24 @@ def train_data(stock_symbols, stocks, time_steps, epochs, batch_size):
 
         x_train, y_train = np.array(x_train), np.array(y_train)
 
-        n_rows, n_cols, n_predictors = x_train.shape[0], x_train.shape[1], len(x_train[0][0])
-        x_train = np.reshape(x_train, (n_rows, n_cols, n_predictors))  # here we add the other variables :0
+        #print(x_train[0])
 
-        lstm = compile_lstm(input_shape=(n_cols, n_predictors))
+        n_rows, n_time_steps, n_features = x_train.shape[0], x_train.shape[1], len(x_train[0][0])
+        x_train = np.reshape(x_train, (n_rows, n_time_steps, n_features))
+
+        lstm = compile_lstm(input_shape=(n_time_steps, n_features))
         lstm.fit(x_train, y_train, epochs=epochs, batch_size=batch_size)
 
-        stock_index += 1
-        location = "models/"
-        if not os.path.exists(location):
-            os.makedirs(location)
-        lstm.save(location + str(stock_symbols[stock_index]) + ".h5")
+        if not os.path.exists(MODELS_LOCATION):
+            os.makedirs(MODELS_LOCATION)
+        lstm.save(MODELS_LOCATION + str(symbol) + ".h5")
+
+
+def load_trained_lstms(stock_symbols):
+    lstms = []
+    for symbol in stock_symbols:
+        lstms.append(load_model(MODELS_LOCATION + symbol + ".h5"))
+    return lstms
 
 
 def fetch_new_data(stock_symbols, time_steps):
@@ -93,3 +126,26 @@ def fetch_new_data(stock_symbols, time_steps):
         add_fourier_transforms(stocks[i])
         stocks[i] = stocks[i].iloc[20:].reset_index(drop=True)
     return stocks, push_stocks
+
+
+def evaluate(stock_symbols, in_stocks, batch_size):
+    lstms = load_trained_lstms(stock_symbols)
+
+    estimates = []
+
+    stock_index = -1
+    for in_stock in in_stocks:
+        stock_index += 1
+        symbol = stock_symbols[stock_index]
+
+        scaler = joblib.load(SCALERS_LOCATION + symbol + ".save")
+
+        test_set = in_stock.iloc[:, :].values
+        test_set = scaler.transform(test_set)
+
+        n_rows, n_cols = test_set.shape[0], test_set.shape[1]
+        test_set = np.reshape(test_set, (1, n_rows, n_cols))
+
+        estimates.append(lstms[stock_index].predict(test_set, batch_size))
+
+    return estimates

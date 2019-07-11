@@ -2,9 +2,16 @@
 from firebase_admin import credentials, firestore, initialize_app
 from entities.Stock import Stock
 from entities.Price import Price
+from constants import SCALERS_LOCATION
 
 
-def push_stocks_data(stock_symbols, stocks):
+def calculate_estimate(symbol, estimate):
+    helper_file = open(SCALERS_LOCATION + symbol + "helper.txt", "r+")
+    original, scaled = helper_file.read().split(" ")
+    return float(estimate) * float(original) / float(scaled)
+
+
+def push_stocks_data(stock_symbols, stocks, estimates):
     cred = credentials.Certificate("./ServiceAccountKey.json")
     initialize_app(cred)
     store = firestore.client()
@@ -24,6 +31,8 @@ def push_stocks_data(stock_symbols, stocks):
         for j in range(len(open)):
             prices.append(Price(open[j], close[j], high[j], low[j], volume[j]).to_dict())
 
-        stock = Stock(symbol, stocks[i]["open"].values.tolist()[0], 1, 99, prices)
+        estimate = calculate_estimate(symbol, estimates[i][0])
+
+        stock = Stock(symbol, stocks[i]["open"].values.tolist()[0], estimate, prices)
 
         collection.document(symbol).set(stock.to_dict())

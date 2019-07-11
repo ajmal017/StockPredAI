@@ -2,6 +2,8 @@ STOCKS_LOCATION = "datasets/stock/"
 FOREX_LOCATION = "datasets/forex/"
 INDEX_LOCATION = "datasets/index/"
 
+MODELS_LOCATION = "models/"
+SCALERS_LOCATION = "scalers/"
 BASE_URL = "https://s3.us-east-2.amazonaws.com/frd001/"
 
 MAP_ENDPOINTS = {
